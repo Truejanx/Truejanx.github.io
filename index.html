@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workbench Notes — Clifton Bradshaw III</title>
+<meta name="description" content="Build logs, troubleshooting notes, and gear recommendations from a self-taught PC builder.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F5F2;
+    --surface:#FFFFFF;
+    --ink:#14181C;
+    --muted:#5C6670;
+    --copper:#B5601A;
+    --copper-soft:#E8C9A8;
+    --mint:#1F8F6B;
+    --line:#DADFDB;
+    --max:1080px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk',sans-serif;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'IBM Plex Mono',monospace;
+  }
+  a{color:inherit;}
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(243,245,242,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 0;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:17px;
+    font-weight:700;
+  }
+  .brand .dot{
+    width:9px;height:9px;border-radius:2px;
+    background:var(--copper);
+    transform:rotate(45deg);
+    flex-shrink:0;
+  }
+  .navlinks{
+    display:flex;
+    gap:30px;
+    font-size:14px;
+    font-weight:500;
+  }
+  .navlinks a{
+    text-decoration:none;
+    color:var(--muted);
+    padding-bottom:3px;
+    border-bottom:1px solid transparent;
+    transition:color .15s, border-color .15s;
+  }
+  .navlinks a:hover{color:var(--ink); border-color:var(--copper);}
+  .navtoggle{display:none;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:84px 0 64px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.2fr 0.8fr;
+    gap:48px;
+    align-items:center;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--mint);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--mint);
+    box-shadow:0 0 0 3px rgba(31,143,107,0.18);
+  }
+  .hero h1{
+    font-size:clamp(34px,5vw,52px);
+    line-height:1.08;
+    font-weight:700;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--copper);
+  }
+  .hero p.lede{
+    margin-top:20px;
+    font-size:17px;
+    color:var(--muted);
+    max-width:480px;
+  }
+  .hero-actions{
+    margin-top:28px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 20px;
+    border-radius:6px;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{
+    background:var(--ink);
+    color:var(--bg);
+  }
+  .btn-primary:hover{box-shadow:0 6px 18px rgba(20,24,28,0.18);}
+  .btn-ghost{
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+  }
+  .btn-ghost:hover{border-color:var(--copper); color:var(--copper);}
+
+  /* ---------- SPEC STICKER (signature element) ---------- */
+  .sticker-wrap{
+    display:flex;
+    justify-content:center;
+  }
+  .sticker{
+    background:var(--surface);
+    border:1.5px dashed var(--line);
+    border-radius:4px;
+    padding:22px 22px 18px;
+    width:280px;
+    transform:rotate(2.5deg);
+    box-shadow:0 18px 40px -16px rgba(20,24,28,0.18);
+    position:relative;
+  }
+  .sticker::before{
+    content:"";
+    position:absolute;
+    top:14px; left:-7px;
+    width:14px;height:14px;
+    background:var(--bg);
+    border:1.5px dashed var(--line);
+    border-radius:50%;
+  }
+  .sticker-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+    margin-bottom:12px;
+  }
+  .sticker-head span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    color:var(--muted);
+  }
+  .sticker-head strong{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--copper);
+    letter-spacing:0.08em;
+  }
+  .sticker-row{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:6px 0;
+    border-bottom:1px dotted var(--line);
+  }
+  .sticker-row:last-of-type{border-bottom:none;}
+  .sticker-row .k{color:var(--muted);}
+  .sticker-row .v{color:var(--ink); font-weight:500; text-align:right;}
+  .sticker-status{
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--mint);
+  }
+  .sticker-status::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--mint);
+  }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:72px 0;}
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:36px;
+  }
+  .section-head .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--copper);
+    letter-spacing:0.08em;
+  }
+  .section-head h2{
+    font-size:28px;
+  }
+  .rule{height:1px;background:var(--line); border:none; margin:0;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:48px;
+  }
+  .about-grid p{color:var(--muted); font-size:15.5px;}
+  .about-grid p + p{margin-top:14px;}
+  .stat-list{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .stat{
+    border-left:2px solid var(--copper);
+    padding-left:14px;
+  }
+  .stat .num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:22px;
+    font-weight:700;
+  }
+  .stat .label{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* ---------- CASE FILE (the build) ---------- */
+  .case-file{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .case-row{
+    display:grid;
+    grid-template-columns:160px 1fr;
+    border-bottom:1px solid var(--line);
+  }
+  .case-row:last-child{border-bottom:none;}
+  .case-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--muted);
+    padding:22px 20px;
+    background:var(--bg);
+    border-right:1px solid var(--line);
+  }
+  .case-body{
+    padding:22px 24px;
+    font-size:15px;
+  }
+  .case-body strong{color:var(--copper);}
+
+  /* ---------- GEAR GRID ---------- */
+  .gear-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+  }
+  .gear-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition:border-color .15s, transform .15s;
+  }
+  .gear-card:hover{border-color:var(--copper); transform:translateY(-2px);}
+  .gear-card .kicker{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--mint);
+    letter-spacing:0.08em;
+  }
+  .gear-card h3{font-size:17px;}
+  .gear-card p{font-size:14px; color:var(--muted); margin:0; flex-grow:1;}
+  .gear-link{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--copper);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:4px;
+  }
+  .gear-link::after{content:"→"; transition:transform .15s;}
+  .gear-card:hover .gear-link::after{transform:translateX(3px);}
+
+  /* ---------- NOTES ---------- */
+  .notes-list{
+    display:flex;
+    flex-direction:column;
+  }
+  .note-item{
+    display:grid;
+    grid-template-columns:120px 1fr;
+    gap:24px;
+    padding:22px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .note-item:first-child{padding-top:0;}
+  .note-date{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    padding-top:2px;
+  }
+  .note-item h3{font-size:17px; margin-bottom:6px;}
+  .note-item p{font-size:14.5px; color:var(--muted); margin:0;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:36px 0 48px;
+  }
+  .footer-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .footer-row .mono{font-size:12px; color:var(--muted);}
+  .footer-links{display:flex; gap:20px;}
+  .footer-links a{font-size:13px; text-decoration:none; color:var(--muted);}
+  .footer-links a:hover{color:var(--copper);}
+  .disclosure{
+    margin-top:18px;
+    font-size:12px;
+    color:var(--muted);
+    border-top:1px dotted var(--line);
+    padding-top:18px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:820px){
+    .hero-grid{grid-template-columns:1fr; gap:40px;}
+    .sticker-wrap{justify-content:flex-start;}
+    .sticker{transform:rotate(1deg);}
+    .about-grid{grid-template-columns:1fr; gap:28px;}
+    .gear-grid{grid-template-columns:1fr 1fr;}
+    .case-row{grid-template-columns:1fr;}
+    .case-label{border-right:none; border-bottom:1px solid var(--line);}
+  }
+  @media (max-width:600px){
+    .navlinks{
+      position:fixed;
+      top:64px; left:0; right:0;
+      background:var(--surface);
+      flex-direction:column;
+      padding:18px 28px;
+      border-bottom:1px solid var(--line);
+      display:none;
+      gap:16px;
+    }
+    .navlinks.open{display:flex;}
+    .navtoggle{
+      display:flex;
+      width:34px;height:34px;
+      align-items:center;
+      justify-content:center;
+      border:1px solid var(--line);
+      border-radius:6px;
+      background:none;
+      cursor:pointer;
+    }
+    .navtoggle span, .navtoggle span::before, .navtoggle span::after{
+      content:"";
+      display:block;
+      width:16px;height:1.5px;
+      background:var(--ink);
+      position:relative;
+    }
+    .navtoggle span::before{position:absolute; top:-5px;}
+    .navtoggle span::after{position:absolute; top:5px;}
+    .gear-grid{grid-template-columns:1fr;}
+    .note-item{grid-template-columns:1fr; gap:6px;}
+    .hero h1{font-size:32px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="brand"><span class="dot"></span>WORKBENCH NOTES</div>
+    <div class="navlinks" id="navlinks">
+      <a href="#about">About</a>
+      <a href="#build">The Build</a>
+      <a href="#gear">Gear</a>
+      <a href="#notes">Notes</a>
+    </div>
+    <button class="navtoggle" id="navtoggle" aria-label="Toggle menu"><span></span></button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Build logs &amp; field notes</div>
+      <h1>I fix my own rigs<br>and write down <em>what worked</em>.</h1>
+      <p class="lede">Hands-on PC builds, troubleshooting notes, and the gear that earned a spot on my desk — documented as I go, not after the fact.</p>
+      <div class="hero-actions">
+        <a href="#build" class="btn btn-primary">Read the latest build log</a>
+        <a href="#gear" class="btn btn-ghost">See recommended gear</a>
+      </div>
+    </div>
+    <div class="sticker-wrap">
+      <div class="sticker">
+        <div class="sticker-head">
+          <span>RIG&nbsp;SPEC</span>
+          <strong>NO. 003</strong>
+        </div>
+        <div class="sticker-row"><span class="k">Chassis</span><span class="v">iBUYPOWER</span></div>
+        <div class="sticker-row"><span class="k">CPU</span><span class="v">Intel</span></div>
+        <div class="sticker-row"><span class="k">Board</span><span class="v">MSI MS-7D98</span></div>
+        <div class="sticker-row"><span class="k">Chipset</span><span class="v">PRO B760-VC WIFI</span></div>
+        <div class="sticker-row"><span class="k">Last Fix</span><span class="v">BIOS update</span></div>
+        <div class="sticker-status">Stable — no reboots since fix</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div >
+      <div class="section-head" style="margin-bottom:18px;">
+        <span class="tag">01</span>
+        <h2>About</h2>
+      </div>
+      <p>I'm Clifton — a hobbyist builder learning to read a motherboard the way other people read a map. Most of what's on this site started as a problem on my own desk that I had to solve before I could get back to work.</p>
+      <p>By day, I'm working toward my PL-400 certification as a Power Platform developer. By night, I'm usually inside a case with a flashlight, figuring out why something's unstable.</p>
+    </div>
+    <div class="stat-list">
+      <div class="stat">
+        <div class="num">1</div>
+        <div class="label">full rig rebuilt from a random-reboot mystery to rock solid</div>
+      </div>
+      <div class="stat">
+        <div class="num">BIOS</div>
+        <div class="label">update traced an Intel voltage issue back to the source</div>
+      </div>
+      <div class="stat">
+        <div class="num">MS-7D98</div>
+        <div class="label">the board I now know better than I'd like to admit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="build">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">02</span>
+      <h2>The Build — Case File 003</h2>
+    </div>
+    <div class="case-file">
+      <div class="case-row">
+        <div class="case-label">SYMPTOM</div>
+        <div class="case-body">Random instability on an iBUYPOWER desktop — unexplained reboots with no obvious trigger.</div>
+      </div>
+      <div class="case-row">
+        <div class="case-label">DIAGNOSIS</div>
+        <div class="case-body">Traced the board down to the exact model — an <strong>MSI MS-7D98</strong>, paired with the <strong>MSI PRO B760-VC WIFI</strong> chipset — then narrowed the cause to an Intel processor voltage setting rather than a failing part.</div>
+      </div>
+      <div class="case-row">
+        <div class="case-label">FIX</div>
+        <div class="case-body">A targeted <strong>BIOS update</strong> corrected the voltage behavior. No reboots since.</div>
+      </div>
+      <div class="case-row">
+        <div class="case-label">TAKEAWAY</div>
+        <div class="case-body">Before swapping parts, check whether the board has a pending firmware fix for your exact CPU — it's free, and it's usually the actual problem.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="gear">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">03</span>
+      <h2>Gear I Recommend</h2>
+    </div>
+    <div class="gear-grid">
+      <div class="gear-card">
+        <span class="kicker">MOTHERBOARD</span>
+        <h3>MSI PRO B760-VC WIFI</h3>
+        <p>The board behind Case File 003. Solid VRM design once the BIOS is current — built-in WiFi is a nice bonus for a clean desk setup.</p>
+        <a href="https://amzn.to/4egFzLI" class="gear-link" target="_blank" rel="noopener sponsored">View on Amazon</a>
+      </div>
+      <div class="gear-card">
+        <span class="kicker">MAINTENANCE</span>
+        <h3>Compressed Air Duster</h3>
+        <p>Dust buildup mimics a dozen other hardware problems. Cheap insurance before you start swapping parts.</p>
+        <a href="https://amzn.to/4aRCnnp" class="gear-link" target="_blank" rel="noopener sponsored">View on Amazon</a>
+      </div>
+      <div class="gear-card">
+        <span class="kicker">DIAGNOSTICS</span>
+        <h3>Digital Multimeter</h3>
+        <p>For when you want to actually measure the voltage instead of guessing — useful well beyond PC builds.</p>
+        <a href="https://amzn.to/4aBKxQQ" class="gear-link" target="_blank" rel="noopener sponsored">View on Amazon</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="notes">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">04</span>
+      <h2>Notes from the Bench</h2>
+    </div>
+    <div class="notes-list">
+      <div class="note-item">
+        <div class="note-date">CASE 003</div>
+        <div>
+          <h3>A BIOS update fixed my random reboots</h3>
+          <p>How I traced an unstable iBUYPOWER desktop back to an Intel voltage setting on the MSI MS-7D98 board — full write-up coming soon.</p>
+        </div>
+      </div>
+      <div class="note-item">
+        <div class="note-date">UP NEXT</div>
+        <div>
+          <h3>Setting up a budget creator PC</h3>
+          <p>What actually matters if you're building a rig for video editing and AI-assisted creative work — not just gaming.</p>
+        </div>
+      </div>
+      <div class="note-item">
+        <div class="note-date">UP NEXT</div>
+        <div>
+          <h3>Why I'd choose the B760 chipset again</h3>
+          <p>A closer look at where this board held up and where it didn't.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-row">
+      <div class="mono">© <span id="year"></span> Clifton Bradshaw III — Workbench Notes</div>
+      <div class="footer-links">
+        <a href="https://github.com/Truejanx" target="_blank" rel="noopener">GitHub</a>
+        <a href="#about">About</a>
+        <a href="#gear">Gear</a>
+      </div>
+    </div>
+    <div class="disclosure">As an Amazon Associate, this site may earn from qualifying purchases made through links on this page.</div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const toggle = document.getElementById('navtoggle');
+  const links = document.getElementById('navlinks');
+  toggle.addEventListener('click', () => links.classList.toggle('open'));
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+</script>
+
+</body>
+</html>
